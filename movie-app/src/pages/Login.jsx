@@ -27,26 +27,9 @@ function Login() {
       });
 
       dispatch(login(data, navigate));
-
-      // let config = {
-      //   method: 'post',
-      //   url: `${import.meta.env.VITE_API}/v1/auth/login`,
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   data: data,
-      // };
-
-      // const response = await axios.request(config);
-      // const { token } = response.data.data;
-
-      // localStorage.setItem('token', token);
-
-      // navigate('/');
-
-      // // Temporary solution
-      // window.location.href = '/';
-    } catch (error) {
+    } 
+    
+    catch (error) {
       if (axios.isAxiosError(error)) {
         toast.error(error.response.data.message);
         return;
