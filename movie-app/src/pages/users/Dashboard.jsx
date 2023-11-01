@@ -1,88 +1,37 @@
 import { useEffect, useState } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
-import axios from 'axios';
-import { toast } from 'react-toastify';
 import Carousel from '../../components/CarouselSlider';
 import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchPopularMovies, searchMovies } from '../../redux/actions/movieActions';
+import { fetchUser } from '../../redux/actions/userActions';
+
+
+
 
 function Dashboard() {
-  const [user, setUser] = useState(null);
-  const [popularMovies, setPopularMovies] = useState([]);
+  const dispatch = useDispatch();
+  const user = useSelector ((state) => state.user.user);
+  const popularMovies = useSelector((state) => state.movie.popularMovies);
   const [buttonText, setButtonText] = useState('More Movie');
   const [showAllMovies, setShowAllMovies] = useState(false);
   const [search, setSearch] = useState('');
 
   useEffect(() => {
-    const getMe = async () => {
-      try {
-        const token = localStorage.getItem('token');
-
-        const response = await axios.get(`${import.meta.env.VITE_API}/v1/auth/me`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const data = response.data.data;
-
-        setUser(data);
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          // If not valid token
-          if (error.response.status === 401) {
-            localStorage.removeItem('token');
-            // Temporary solution
-            return (window.location.href = '/');
-          }
-
-          toast.error(error.response.data.message);
-          return;
-        }
-        toast.error(error.message);
-      }
-    };
-
-    getMe();
-  }, []);
+    dispatch(fetchUser());
+  }, [dispatch]);
 
   useEffect(() => {
-    const apiUrl = `${import.meta.env.VITE_API}/v1/movie/popular`;
-    const token = localStorage.getItem('token');
+    dispatch(fetchPopularMovies());
+  }, [dispatch]);
 
-    const config = {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    };
-
-    axios
-      .get(apiUrl, config)
-      .then((response) => {
-        setPopularMovies(response.data.data);
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
-  }, []);
-
+  // Modify the fatchMovie function to dispatch a searchMovies action
   async function fatchMovie() {
-    {
-      search !== '';
+    if (search !== '') {
+      dispatch(searchMovies(search));
     }
-    const apiSearch = await `${import.meta.env.VITE_API}/v1/search/movie?page=1&query=${search}`;
-    const token = await localStorage.getItem('token');
-
-    const config = {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    };
-
-    await axios.get(apiSearch, config).then((response) => {
-      setPopularMovies(response.data.data);
-    });
-  }
-
+  }  
+  
   const PopularMovieList = () => {
     const limited = showAllMovies ? popularMovies : popularMovies.slice(0, 4);
     return limited.map((movie, i) => {
