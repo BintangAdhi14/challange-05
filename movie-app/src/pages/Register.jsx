@@ -5,8 +5,11 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import GoogleLogin from '../components/GoogleLogin';
 import CarouselSlider from '../components/CarouselSlider';
+import { useDispatch } from 'react-redux';
+import { register } from '../redux/actions/authActions';
 
 function Register() {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [name, setName] = useState('');
@@ -23,6 +26,8 @@ function Register() {
         email,
         password,
       });
+
+      dispatch(register(data, navigate));
 
       let config = {
         method: 'post',

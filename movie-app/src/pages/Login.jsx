@@ -5,13 +5,17 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import GoogleLogin from '../components/GoogleLogin';
 import CarouselSlider from '../components/CarouselSlider';
+import { useDispatch, useSelector } from "react-redux";
+import { login } from '../redux/actions/authActions';
 
 function Login() {
+  const dispatch = useDispatch ()
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isClicked, setIsClicked] = useState(false);
+  const { loading, error } = useSelector((state)=> state.auth);
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -22,24 +26,26 @@ function Login() {
         password,
       });
 
-      let config = {
-        method: 'post',
-        url: `${import.meta.env.VITE_API}/v1/auth/login`,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        data: data,
-      };
+      dispatch(login(data, navigate));
 
-      const response = await axios.request(config);
-      const { token } = response.data.data;
+      // let config = {
+      //   method: 'post',
+      //   url: `${import.meta.env.VITE_API}/v1/auth/login`,
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   data: data,
+      // };
 
-      localStorage.setItem('token', token);
+      // const response = await axios.request(config);
+      // const { token } = response.data.data;
 
-      navigate('/');
+      // localStorage.setItem('token', token);
 
-      // Temporary solution
-      window.location.href = '/';
+      // navigate('/');
+
+      // // Temporary solution
+      // window.location.href = '/';
     } catch (error) {
       if (axios.isAxiosError(error)) {
         toast.error(error.response.data.message);
@@ -48,6 +54,8 @@ function Login() {
       toast.error(error.message);
     }
   };
+
+  
 
   const handleCloseRegister = () => {
     const login = document.querySelector('.wrapper-login');
@@ -59,6 +67,7 @@ function Login() {
     var passwordField = document.getElementById('passwordField');
     passwordField.type = passwordField.type === 'password' ? 'text' : 'password';
   };
+
 
   return (
     <>

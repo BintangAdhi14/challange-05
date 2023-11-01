@@ -10,10 +10,12 @@ import Dashboard from './pages/users/Dashboard';
 import { ToastContainer } from 'react-toastify';
 import './App.css';
 import MovieDetail from './components/MovieDetail';
+import { Provider } from 'react-redux';
+import store from './redux/store';
 
 function App() {
   return (
-    <>
+    <Provider store={store}>
       <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_OAUTH_CLIENT_ID}>
         <BrowserRouter>
           <Header />
@@ -51,7 +53,7 @@ function App() {
           <ToastContainer theme="colored" />
         </BrowserRouter>
       </GoogleOAuthProvider>
-    </>
+    </Provider>
   );
 }
 
